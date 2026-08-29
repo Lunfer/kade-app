@@ -1,0 +1,12 @@
+# Minimum versions, not exact pins: this app was scaffolded against Python
+# 3.10, but you're running 3.14. pydantic-core (a Rust extension) only ships
+# prebuilt wheels for the Python versions current when each release comes
+# out, so a too-old exact pin forces pip to compile it from source -- which
+# then fails if your Rust toolchain doesn't support your Python version yet
+# either. Loose minimums let pip pick whatever current release already has
+# a 3.14 wheel.
+fastapi>=0.115
+uvicorn[standard]>=0.34
+pydantic>=2.9
+anthropic>=0.42
+python-dotenv>=1.0
