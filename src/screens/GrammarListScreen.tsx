@@ -166,7 +166,7 @@ export function GrammarListScreen() {
           <Pressable
             key={topic.id}
             style={styles.row}
-            onPress={() => navigation.navigate('GrammarDetail', { topicId: topic.id })}
+            onPress={() => navigation.navigate('GrammarDetail', { topicId: topic.id, topics: shown })}
           >
             <View style={styles.rowText}>
               <Text style={[textStyles.subheading, styles.rowTitle]}>{topic.title}</Text>

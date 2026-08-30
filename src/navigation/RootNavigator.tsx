@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { House, CaseLower, LoaderCircle, SquareText, Settings } from 'lucide-react-native';
 import { colors } from '../theme';
 import { HomeScreen } from '../screens/HomeScreen';
+import { GrammarTopic } from '../data/types';
 import { GrammarListScreen } from '../screens/GrammarListScreen';
 import { GrammarDetailScreen } from '../screens/GrammarDetailScreen';
 import { ProgressScreen } from '../screens/ProgressScreen';
@@ -13,7 +14,10 @@ import { SettingsScreen } from '../screens/SettingsScreen';
 
 export type GrammarStackParamList = {
   GrammarList: undefined;
-  GrammarDetail: { topicId: string };
+  // topics: the filtered/ordered list the user was browsing when they opened this topic,
+  // used to swipe to the next/previous topic without a refetch. Undefined for deep links
+  // that skip the list screen -- swipe navigation is simply unavailable there.
+  GrammarDetail: { topicId: string; topics?: GrammarTopic[] };
 };
 
 const Tab = createBottomTabNavigator();
