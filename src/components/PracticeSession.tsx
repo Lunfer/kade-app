@@ -339,8 +339,9 @@ function DrillCard(props: {
 
       {!answered && (
         <View style={styles.actionRow}>
+          <Button title="Skip" variant="ghost" onPress={onSkip} style={styles.actionButton} />
           {(drill.type === 'conjugation' || drill.type === 'fill-blank') && (
-            <Button title="Check" onPress={onSubmitText} style={styles.actionButton} />
+            <Button title="Check" onPress={onSubmitText} style={styles.actionButton} textColor="#FFFFFF" />
           )}
           {drill.type === 'word-order' && (
             <Button
@@ -348,9 +349,9 @@ function DrillCard(props: {
               onPress={onSubmitTokens}
               disabled={tokenPool.length > 0}
               style={styles.actionButton}
+              textColor="#FFFFFF"
             />
           )}
-          <Button title="Skip" variant="ghost" onPress={onSkip} style={styles.actionButton} />
         </View>
       )}
 
@@ -415,13 +416,14 @@ function WritingCard(props: {
 
       {!answered && (
         <View style={styles.actionRow}>
+          <Button title="Skip" variant="ghost" onPress={onSkip} disabled={checking} style={styles.actionButton} />
           <Button
             title={checking ? 'Checking…' : 'Submit'}
             onPress={onSubmit}
             loading={checking}
             style={styles.actionButton}
+            textColor="#FFFFFF"
           />
-          <Button title="Skip" variant="ghost" onPress={onSkip} disabled={checking} style={styles.actionButton} />
         </View>
       )}
 

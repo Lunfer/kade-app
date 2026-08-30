@@ -12,7 +12,7 @@ import { a0Drills } from './a0/drills';
 // Bump this whenever seed content changes shape or content. Content tables
 // get wiped and re-inserted on a version bump; attempts/progress are
 // untouched, since those are the user's actual data, not content.
-const CONTENT_VERSION = '2026-08-30.4';
+const CONTENT_VERSION = '2026-08-30.5';
 
 // A0 has no writing prompts (see docs/grammar-a0-curriculum-map.md -- free-form
 // writing needs a grammar system to write with, which A0 doesn't teach yet).

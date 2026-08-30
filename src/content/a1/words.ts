@@ -33,6 +33,7 @@ export const a1Words: WordSeed[] = [
   { id: 'w-stad', nl: 'de stad', en: 'the city', themeId: 'theme-travel', firstIntroducedTopicId: 'a1-prepositions', surfaceForms: ['stad', 'de stad', 'steden'] },
   { id: 'w-land', nl: 'het land', en: 'the country', themeId: 'theme-travel', firstIntroducedTopicId: 'a1-articles', surfaceForms: ['land', 'het land', 'landen'] },
   { id: 'w-straat', nl: 'de straat', en: 'the street', themeId: 'theme-travel', firstIntroducedTopicId: 'a1-prepositions', surfaceForms: ['straat', 'de straat', 'straten'] },
+  { id: 'w-kade', nl: 'de kade', en: 'the quay / canal-side street', themeId: 'theme-travel', firstIntroducedTopicId: 'a1-prepositions', surfaceForms: ['kade', 'de kade', 'kades', 'de kades'] },
 
   // Work & school
   { id: 'w-werken', nl: 'werken', en: 'to work', themeId: 'theme-work-school', firstIntroducedTopicId: 'a1-verbs-present', surfaceForms: ['werken', 'werk', 'werkt'] },
