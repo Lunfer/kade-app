@@ -18,6 +18,9 @@ export type GrammarCategory =
   | 'negation'
   | 'question'
   | 'diminutive'
+  | 'pronunciation'
+  | 'phrases'
+  | 'vocabulary'
   | 'other';
 
 export interface GrammarTopic {

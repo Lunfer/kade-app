@@ -23,6 +23,9 @@ const CATEGORY_LABEL: Record<string, string> = {
   negation: 'Negation',
   question: 'Question',
   diminutive: 'Diminutive',
+  pronunciation: 'Pronunciation',
+  phrases: 'Phrases',
+  vocabulary: 'Vocabulary',
   other: 'Other',
 };
 
