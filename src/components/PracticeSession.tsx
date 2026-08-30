@@ -5,7 +5,7 @@ import { Button } from './Button';
 import { colors, textStyles, spacing, radii, fontFamilies } from '../theme';
 import { topicsRepo, drillsRepo, writingPromptsRepo } from '../data/repositories/content';
 import { progressRepo } from '../data/repositories/progress';
-import { DrillItem, WritingPrompt } from '../data/types';
+import { DrillItem, Level, WritingPrompt } from '../data/types';
 import { buildPracticeQueue, gradeDrillAnswer, joinTokens, PracticeQueueItem } from '../engine/quizEngine';
 import { gradeSentence, GradeResponse } from '../api/gradingApi';
 
@@ -15,7 +15,11 @@ type Phase = 'loading' | 'answering' | 'checking' | 'feedback' | 'done' | 'empty
 
 // The live practice/drill session, embedded inline (e.g. inside the Home
 // screen's "Practice Today" card) rather than shown as its own screen.
-export function PracticeSession() {
+// `level` is the effective level (levelOverride ?? currentLevel) computed
+// by the caller -- the queue is built only from that level's topics, so
+// practice always matches what the Settings screen's level picker shows,
+// rather than mixing in every level's content regardless of selection.
+export function PracticeSession({ level }: { level: Level }) {
   const navigation = useNavigation();
   const [queue, setQueue] = useState<PracticeQueueItem[]>([]);
   const [index, setIndex] = useState(0);
@@ -31,12 +35,17 @@ export function PracticeSession() {
 
   const startSession = useCallback(async () => {
     setPhase('loading');
-    const [topics, allDrills, allPrompts, progress] = await Promise.all([
+    const [allTopics, allDrills, allPrompts, progress] = await Promise.all([
       topicsRepo.getAll(),
       drillsRepo.getAll(),
       writingPromptsRepo.getAll(),
       progressRepo.getUserProgress(),
     ]);
+
+    // Only practice the selected level's topics -- otherwise a beginner on
+    // A0 gets quizzed on A1 grammar (or vice versa) regardless of what the
+    // Settings screen's level picker says.
+    const topics = allTopics.filter((t) => t.level === level);
 
     const drillsByTopic = new Map<string, DrillItem[]>();
     for (const d of allDrills) {
@@ -64,7 +73,7 @@ export function PracticeSession() {
     setQueue(newQueue);
     setIndex(0);
     setPhase(newQueue.length === 0 ? 'empty' : 'answering');
-  }, []);
+  }, [level]);
 
   useEffect(() => {
     startSession();

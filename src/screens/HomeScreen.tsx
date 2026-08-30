@@ -76,7 +76,7 @@ export function HomeScreen() {
         </Text>
 
         <View style={styles.practiceBox}>
-          <PracticeSession />
+          <PracticeSession level={level} />
         </View>
       </View>
 
