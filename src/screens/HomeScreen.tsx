@@ -48,7 +48,9 @@ export function HomeScreen() {
 
   return (
     <ScreenContainer style={styles.screenContent}>
-      <Text style={[textStyles.displayLarge, styles.title]}>Kade</Text>
+      <Text style={[textStyles.displayLarge, styles.title]}>
+        Kade <Text style={[textStyles.wordSubtitle, styles.titlePronunciation]}>(KAH-duh)</Text>
+      </Text>
       <Text style={[textStyles.body, styles.subtitle]}>Your Dutch, one canal house at a time.</Text>
 
       {/* Cascading stat cards -- staggered on purpose, bleeding off the
@@ -126,6 +128,10 @@ const styles = StyleSheet.create({
   screenContent: { flexGrow: 1, paddingBottom: 0 },
 
   title: { color: colors.brick },
+  // Matches the glossed-text convention used elsewhere for translating a
+  // Dutch word (see WordText/GlossedSentence, textStyles.wordSubtitle) --
+  // reused here for a phonetic gloss instead of a translation.
+  titlePronunciation: { color: colors.textFaded },
   subtitle: { color: colors.textSecondary, marginTop: spacing.xs, marginBottom: spacing.lg },
 
   // Container tall enough to hold the diagonal stack; overflow is left
