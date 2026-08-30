@@ -1,4 +1,4 @@
-import { getApiBaseUrl } from '../config/env';
+import { getApiBaseUrl, getApiSecret } from '../config/env';
 
 export interface GradeRequest {
   sentence: string;
@@ -16,10 +16,14 @@ export interface GradeResponse {
 export async function gradeSentence(request: GradeRequest): Promise<GradeResponse> {
   const url = `${getApiBaseUrl()}/grade`;
   let response: Response;
+  const apiSecret = getApiSecret();
   try {
     response = await fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...(apiSecret ? { 'X-API-Secret': apiSecret } : {}),
+      },
       body: JSON.stringify(request),
     });
   } catch (err) {
@@ -46,6 +50,12 @@ export async function gradeSentence(request: GradeRequest): Promise<GradeRespons
     // than prefixing "Grading server returned 402: ...".
     if (response.status === 402 || response.status === 429) {
       throw new Error(detail);
+    }
+    if (response.status === 403) {
+      throw new Error(
+        'The grading server rejected this request (missing or wrong API secret). ' +
+        'If you just deployed, make sure EXPO_PUBLIC_API_SECRET matches the backend\'s API_SECRET.'
+      );
     }
     throw new Error(`Grading server returned ${response.status}: ${detail}`);
   }

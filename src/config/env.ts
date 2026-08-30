@@ -38,3 +38,15 @@ export function getApiBaseUrl(): string {
     'EXPO_PUBLIC_API_URL is not set. Production builds must define it (see .env.example) -- there is no dev server host to fall back to.'
   );
 }
+
+/**
+ * Shared-secret header sent as X-API-Secret, checked by the backend's
+ * verify_api_secret (see backend/app/main.py) once API_SECRET is set there.
+ * Undefined/empty here just means the header is omitted -- fine for local
+ * LAN dev where the backend has no API_SECRET configured either. Set
+ * EXPO_PUBLIC_API_SECRET (matching the deployed backend's API_SECRET) once
+ * pointing a build at the Cloud Run URL.
+ */
+export function getApiSecret(): string | undefined {
+  return process.env.EXPO_PUBLIC_API_SECRET || undefined;
+}

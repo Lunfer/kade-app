@@ -1,7 +1,8 @@
 import anthropic
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
+from .config import API_SECRET
 from .grading import grade_with_claude
 from .models import GradeRequest, GradeResponse
 
@@ -22,7 +23,23 @@ def health() -> dict:
     return {"status": "ok"}
 
 
-@app.post("/grade", response_model=GradeResponse)
+def verify_api_secret(x_api_secret: str | None = Header(default=None)) -> None:
+    """Shared-secret guard, same pattern as Rhoi's verify_cron.
+
+    Only enforced when API_SECRET is actually set (backend/.env locally, a
+    Secret Manager-backed env var on Cloud Run) -- unset means dev-mode LAN
+    use with no header required. Once deployed publicly, set it so a bare
+    Cloud Run URL can't be hit by anonymous scanners spending the Anthropic
+    API credits behind it. Note this only stops opportunistic/anonymous
+    abuse: the secret ships inside the built app (EXPO_PUBLIC_API_SECRET),
+    so it is not secret from someone who decompiles the APK -- proportionate
+    for a personal single-user app, not a substitute for real per-user auth.
+    """
+    if not API_SECRET or x_api_secret != API_SECRET:
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+
+@app.post("/grade", response_model=GradeResponse, dependencies=[Depends(verify_api_secret)])
 async def grade(request: GradeRequest) -> GradeResponse:
     try:
         return await grade_with_claude(request)
