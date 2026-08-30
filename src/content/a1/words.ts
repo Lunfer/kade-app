@@ -48,4 +48,11 @@ export const a1Words: WordSeed[] = [
   { id: 'w-spelen', nl: 'spelen', en: 'to play', themeId: 'theme-daily-life', firstIntroducedTopicId: 'a1-verbs-present', surfaceForms: ['spelen', 'speel', 'speelt'] },
   { id: 'w-praten', nl: 'praten', en: 'to talk', themeId: 'theme-daily-life', firstIntroducedTopicId: 'a1-verbs-present', surfaceForms: ['praten', 'praat'] },
   { id: 'w-horen', nl: 'horen', en: 'to hear', themeId: 'theme-daily-life', firstIntroducedTopicId: 'a1-verbs-present', surfaceForms: ['horen', 'hoor', 'hoort'] },
+  // Auxiliary & modal verbs
+  { id: 'w-zijn', nl: 'zijn', en: 'to be', themeId: 'theme-daily-life', firstIntroducedTopicId: 'a1-verbs-zijn-hebben', surfaceForms: ['zijn', 'ben', 'bent', 'is'] },
+  { id: 'w-hebben', nl: 'hebben', en: 'to have', themeId: 'theme-daily-life', firstIntroducedTopicId: 'a1-verbs-zijn-hebben', surfaceForms: ['hebben', 'heb', 'hebt', 'heeft'] },
+  { id: 'w-kunnen', nl: 'kunnen', en: 'can, to be able to', themeId: 'theme-daily-life', firstIntroducedTopicId: 'a1-modal-verbs', surfaceForms: ['kunnen', 'kan', 'kunt'] },
+  { id: 'w-willen', nl: 'willen', en: 'to want to', themeId: 'theme-daily-life', firstIntroducedTopicId: 'a1-modal-verbs', surfaceForms: ['willen', 'wil', 'wilt'] },
+  { id: 'w-moeten', nl: 'moeten', en: 'must, to have to', themeId: 'theme-daily-life', firstIntroducedTopicId: 'a1-modal-verbs', surfaceForms: ['moeten', 'moet'] },
+  { id: 'w-mogen', nl: 'mogen', en: 'may, to be allowed to', themeId: 'theme-daily-life', firstIntroducedTopicId: 'a1-modal-verbs', surfaceForms: ['mogen', 'mag'] },
 ];

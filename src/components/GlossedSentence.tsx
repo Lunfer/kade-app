@@ -1,53 +1,33 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { colors, textStyles, spacing } from '../theme';
-import { buildSurfaceFormIndex } from '../content';
 
 interface GlossedSentenceProps {
   nl: string;
-  /** Fallback shown once for the whole sentence when no per-word gloss is available. */
+  /** Full sentence translation, always shown beneath the sentence. */
   en?: string;
 }
 
-const surfaceFormIndex = buildSurfaceFormIndex();
-
 /**
- * Renders a Dutch sentence word-by-word, with a small faded English gloss
- * under any token that matches a known vocabulary word (including its
- * tracked inflected forms). This is what makes "every new word gets a
- * translation underneath" hold true inside full example sentences, not
- * just in isolated vocab lists.
+ * Renders a Dutch example sentence with its full English translation
+ * underneath -- always, consistently, for every example. (Word-by-word
+ * glossing lives separately in WordText, for standalone vocab like drill
+ * options and the Vocabulary grid; mixing that into full sentences here
+ * made some examples show a couple of stray per-word glosses and others
+ * show none, depending on which words happened to be in the tracked
+ * vocabulary list, so it was dropped in favor of just the sentence
+ * translation.)
  */
 export function GlossedSentence({ nl, en }: GlossedSentenceProps) {
-  const tokens = useMemo(() => nl.split(/\s+/), [nl]);
-  const anyMatched = useMemo(
-    () => tokens.some((t) => surfaceFormIndex.has(t.replace(/[.,!?;:'"]/g, '').toLowerCase())),
-    [tokens]
-  );
-
   return (
     <View>
-      <View style={styles.row}>
-        {tokens.map((token, i) => {
-          const clean = token.replace(/[.,!?;:'"]/g, '').toLowerCase();
-          const match = surfaceFormIndex.get(clean);
-          return (
-            <View key={i} style={styles.tokenWrap}>
-              <Text style={[textStyles.body, styles.nl]}>{token}</Text>
-              {match ? <Text style={[textStyles.wordSubtitle, styles.en]}>{match.en}</Text> : null}
-            </View>
-          );
-        })}
-      </View>
-      {!anyMatched && en ? <Text style={[textStyles.wordSubtitle, styles.sentenceEn]}>{en}</Text> : null}
+      <Text style={[textStyles.body, styles.nl]}>{nl}</Text>
+      {en ? <Text style={[textStyles.wordSubtitle, styles.sentenceEn]}>{en}</Text> : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  row: { flexDirection: 'row', flexWrap: 'wrap', columnGap: spacing.xs, rowGap: spacing.xs },
-  tokenWrap: { alignItems: 'flex-start' },
   nl: { color: colors.textPrimary },
-  en: { color: colors.textFaded, marginTop: 1 },
   sentenceEn: { color: colors.textFaded, marginTop: spacing.xs },
 });

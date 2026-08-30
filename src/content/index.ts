@@ -8,7 +8,7 @@ import { a1WritingPrompts } from './a1/writingPrompts';
 // Bump this whenever seed content changes shape or content. Content tables
 // get wiped and re-inserted on a version bump; attempts/progress are
 // untouched, since those are the user's actual data, not content.
-const CONTENT_VERSION = '2026-08-29.1';
+const CONTENT_VERSION = '2026-08-30.2';
 
 export const allThemes = [...a1Themes];
 export const allWords: WordSeed[] = [...a1Words];

@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet, ActivityIndicator } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { Button } from './Button';
-import { colors, textStyles, spacing, radii } from '../theme';
+import { colors, textStyles, spacing, radii, fontFamilies } from '../theme';
 import { topicsRepo, drillsRepo, writingPromptsRepo } from '../data/repositories/content';
 import { progressRepo } from '../data/repositories/progress';
 import { DrillItem, WritingPrompt } from '../data/types';
@@ -15,6 +16,7 @@ type Phase = 'loading' | 'answering' | 'checking' | 'feedback' | 'done' | 'empty
 // The live practice/drill session, embedded inline (e.g. inside the Home
 // screen's "Practice Today" card) rather than shown as its own screen.
 export function PracticeSession() {
+  const navigation = useNavigation();
   const [queue, setQueue] = useState<PracticeQueueItem[]>([]);
   const [index, setIndex] = useState(0);
   const [phase, setPhase] = useState<Phase>('loading');
@@ -88,6 +90,26 @@ export function PracticeSession() {
       setPhase('answering');
     }
   }, [index, queue.length]);
+
+  // Moves on to the next item without grading or recording an attempt, so
+  // skipped items don't count against (or for) the topic's accuracy.
+  const skipCurrent = useCallback(() => {
+    advance();
+  }, [advance]);
+
+  // Jumps to the Grammar tab's detail screen for the current item's topic,
+  // so a "?" next to a wrong answer can point straight at the grammar
+  // explanation that explains why it's wrong. The bottom tab navigator
+  // isn't given a typed param list, so this crosses tabs with an
+  // untyped nested-navigate call (same pattern React Navigation docs use
+  // for cross-tab navigation without a shared root param list).
+  const viewExplanation = useCallback(() => {
+    if (!current) return;
+    (navigation as any).navigate('Grammar', {
+      screen: 'GrammarDetail',
+      params: { topicId: current.topic.id },
+    });
+  }, [navigation, current]);
 
   if (phase === 'loading') {
     return (
@@ -183,6 +205,8 @@ export function PracticeSession() {
           onSubmitText={() => submitDrill(textAnswer)}
           onSubmitOption={(opt) => submitDrill(opt)}
           onSubmitTokens={() => submitDrill(joinTokens(tokenAnswer))}
+          onSkip={skipCurrent}
+          onViewExplanation={viewExplanation}
         />
       ) : (
         <WritingCard
@@ -193,6 +217,8 @@ export function PracticeSession() {
           result={writingResult}
           error={writingError}
           onSubmit={submitWriting}
+          onSkip={skipCurrent}
+          onViewExplanation={viewExplanation}
         />
       )}
 
@@ -214,8 +240,25 @@ function DrillCard(props: {
   onSubmitText: () => void;
   onSubmitOption: (opt: string) => void;
   onSubmitTokens: () => void;
+  onSkip: () => void;
+  onViewExplanation: () => void;
 }) {
-  const { drill, phase, textAnswer, setTextAnswer, tokenPool, tokenAnswer, setTokenPool, setTokenAnswer, drillCorrect, onSubmitText, onSubmitOption, onSubmitTokens } = props;
+  const {
+    drill,
+    phase,
+    textAnswer,
+    setTextAnswer,
+    tokenPool,
+    tokenAnswer,
+    setTokenPool,
+    setTokenAnswer,
+    drillCorrect,
+    onSubmitText,
+    onSubmitOption,
+    onSubmitTokens,
+    onSkip,
+    onViewExplanation,
+  } = props;
   const answered = phase === 'feedback';
 
   return (
@@ -247,7 +290,6 @@ function DrillCard(props: {
             autoCapitalize="none"
             autoCorrect={false}
           />
-          {!answered && <Button title="Check" onPress={onSubmitText} style={{ marginTop: spacing.sm }} />}
         </View>
       )}
 
@@ -283,14 +325,23 @@ function DrillCard(props: {
               </Pressable>
             ))}
           </View>
-          {!answered && (
+        </View>
+      )}
+
+      {!answered && (
+        <View style={styles.actionRow}>
+          {(drill.type === 'conjugation' || drill.type === 'fill-blank') && (
+            <Button title="Check" onPress={onSubmitText} style={styles.actionButton} />
+          )}
+          {drill.type === 'word-order' && (
             <Button
               title="Check"
               onPress={onSubmitTokens}
               disabled={tokenPool.length > 0}
-              style={{ marginTop: spacing.sm }}
+              style={styles.actionButton}
             />
           )}
+          <Button title="Skip" variant="ghost" onPress={onSkip} style={styles.actionButton} />
         </View>
       )}
 
@@ -298,9 +349,20 @@ function DrillCard(props: {
         <View style={[styles.feedbackBox, drillCorrect ? styles.feedbackCorrect : styles.feedbackWrong]}>
           <Text style={textStyles.subheading}>{drillCorrect ? 'Correct!' : 'Not quite.'}</Text>
           {!drillCorrect && (
-            <Text style={[textStyles.bodySmall, styles.mutedText]}>
-              Correct answer: {drill.correctAnswers[0]}
-            </Text>
+            <View style={styles.answerRow}>
+              <Text style={[textStyles.bodySmall, styles.mutedText]}>
+                Correct answer: {drill.correctAnswers[0]}
+              </Text>
+              <Pressable
+                onPress={onViewExplanation}
+                style={styles.explainButton}
+                hitSlop={8}
+                accessibilityRole="button"
+                accessibilityLabel="Why is this the correct answer?"
+              >
+                <Text style={styles.explainButtonText}>?</Text>
+              </Pressable>
+            </View>
           )}
         </View>
       )}
@@ -316,8 +378,10 @@ function WritingCard(props: {
   result: GradeResponse | null;
   error: string | null;
   onSubmit: () => void;
+  onSkip: () => void;
+  onViewExplanation: () => void;
 }) {
-  const { prompt, phase, textAnswer, setTextAnswer, result, error, onSubmit } = props;
+  const { prompt, phase, textAnswer, setTextAnswer, result, error, onSubmit, onSkip, onViewExplanation } = props;
   const answered = phase === 'feedback';
   const checking = phase === 'checking';
 
@@ -341,14 +405,33 @@ function WritingCard(props: {
       {error && <Text style={[textStyles.bodySmall, styles.errorText]}>{error}</Text>}
 
       {!answered && (
-        <Button title={checking ? 'Checking…' : 'Submit'} onPress={onSubmit} loading={checking} style={{ marginTop: spacing.sm }} />
+        <View style={styles.actionRow}>
+          <Button
+            title={checking ? 'Checking…' : 'Submit'}
+            onPress={onSubmit}
+            loading={checking}
+            style={styles.actionButton}
+          />
+          <Button title="Skip" variant="ghost" onPress={onSkip} disabled={checking} style={styles.actionButton} />
+        </View>
       )}
 
       {answered && result && (
         <View style={[styles.feedbackBox, result.correct ? styles.feedbackCorrect : styles.feedbackWrong]}>
           <Text style={textStyles.subheading}>{result.correct ? 'Correct!' : `Score: ${result.score}/100`}</Text>
           {!result.correct && (
-            <Text style={[textStyles.bodySmall, styles.mutedText]}>Corrected: {result.correctedSentence}</Text>
+            <View style={styles.answerRow}>
+              <Text style={[textStyles.bodySmall, styles.mutedText]}>Corrected: {result.correctedSentence}</Text>
+              <Pressable
+                onPress={onViewExplanation}
+                style={styles.explainButton}
+                hitSlop={8}
+                accessibilityRole="button"
+                accessibilityLabel="Why is this the correct answer?"
+              >
+                <Text style={styles.explainButtonText}>?</Text>
+              </Pressable>
+            </View>
           )}
           <Text style={[textStyles.bodySmall, styles.mutedText, { marginTop: spacing.xs }]}>{result.explanation}</Text>
         </View>
@@ -415,7 +498,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
   },
   tokenText: { color: colors.textPrimary },
+  // Shared row for the primary action (Check/Submit) plus the Skip button,
+  // so skipping is always available right where the answer controls are,
+  // without requiring an item to be submitted for checking first.
+  actionRow: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.sm },
+  actionButton: { flex: 1 },
   feedbackBox: { marginTop: spacing.md, padding: spacing.md, borderRadius: radii.md },
   feedbackCorrect: { backgroundColor: colors.successTint },
   feedbackWrong: { backgroundColor: colors.errorTint },
+  // Correct-answer line paired with the "?" that jumps to the grammar
+  // explanation for why it's correct (and thus why the given answer was
+  // wrong).
+  answerRow: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: spacing.xs, marginTop: spacing.xs },
+  explainButton: {
+    width: 20,
+    height: 20,
+    borderRadius: radii.pill,
+    backgroundColor: colors.teal,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  explainButtonText: { color: colors.textOnTeal, fontSize: 12, lineHeight: 14, fontFamily: fontFamilies.bodyBold },
 });

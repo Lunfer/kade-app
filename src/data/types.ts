@@ -9,11 +9,15 @@ export type GrammarCategory =
   | 'verb'
   | 'word-order'
   | 'article'
+  | 'adjective'
   | 'preposition'
   | 'pronoun'
   | 'possessive'
   | 'comparison'
   | 'conjunction'
+  | 'negation'
+  | 'question'
+  | 'diminutive'
   | 'other';
 
 export interface GrammarTopic {
