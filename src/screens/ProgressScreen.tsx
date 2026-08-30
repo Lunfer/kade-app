@@ -27,6 +27,15 @@ export function ProgressScreen() {
         Each house is a grammar topic along the canal. Brighter teal and gold mean stronger mastery.
       </Text>
 
+      <View style={styles.legend}>
+        {(['none', 'low', 'mid', 'high', 'done'] as const).map((m) => (
+          <View key={m} style={styles.legendItem}>
+            <View style={[styles.legendSwatch, { backgroundColor: legendColor(m) }]} />
+            <Text style={[textStyles.caption, styles.legendLabel]}>{legendText(m)}</Text>
+          </View>
+        ))}
+      </View>
+
       {LEVELS.filter((l) => topics.some((t) => t.level === l)).map((level) => (
         <View key={level} style={styles.levelSection}>
           <Text style={[textStyles.subheading, styles.levelLabel]}>{level}</Text>
@@ -41,15 +50,6 @@ export function ProgressScreen() {
           </ScrollView>
         </View>
       ))}
-
-      <View style={styles.legend}>
-        {(['none', 'low', 'mid', 'high', 'done'] as const).map((m) => (
-          <View key={m} style={styles.legendItem}>
-            <View style={[styles.legendSwatch, { backgroundColor: legendColor(m) }]} />
-            <Text style={[textStyles.caption, styles.legendLabel]}>{legendText(m)}</Text>
-          </View>
-        ))}
-      </View>
     </ScreenContainer>
   );
 }
@@ -71,11 +71,11 @@ function legendText(m: string) {
 
 const styles = StyleSheet.create({
   title: { color: colors.brick, marginBottom: spacing.xs },
-  subtitle: { color: colors.textSecondary, marginBottom: spacing.lg },
+  subtitle: { color: colors.textSecondary, marginBottom: spacing.sm },
   levelSection: { marginBottom: spacing.xl },
   levelLabel: { color: colors.textPrimary, marginBottom: spacing.sm },
   street: { gap: spacing.md, paddingBottom: spacing.sm, paddingRight: spacing.md },
-  legend: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md, marginTop: spacing.sm },
+  legend: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md, marginBottom: spacing.lg },
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
   legendSwatch: { width: 10, height: 10, borderRadius: radii.sm },
   legendLabel: { color: colors.textSecondary },
