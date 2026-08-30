@@ -25,7 +25,16 @@ export interface GrammarTopic {
   level: Level;
   category: GrammarCategory;
   title: string;
-  /** Plain-English, example-driven explanation. Markdown-lite: blank lines = paragraphs. */
+  /**
+   * Plain-English, example-driven explanation. Markdown-lite: blank lines = paragraphs.
+   *
+   * Inline emphasis (rendered by <GrammarExplanationText>, src/components/GrammarExplanationText.tsx)
+   * -- use these consistently across every level, not just A1:
+   *   **term**   bold   -- naming/defining a grammatical term the first time it appears (e.g. **stem**, **t-verb**)
+   *   __text__   underline -- an exception, warning, or "don't do this" caveat
+   *   ==text==   highlight -- the single core rule/takeaway of the topic (sparingly: 1-2 per topic, not every sentence)
+   * See docs/grammar-content-style-guide.md for the full guide with examples.
+   */
   explanation: string;
   examples: { nl: string; en: string }[];
   order: number;

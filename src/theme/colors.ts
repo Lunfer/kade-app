@@ -24,6 +24,10 @@ export const colors = {
 
   // Brass / window trim, used very sparingly for highlights (streaks, gold stars)
   brass: '#C79A45',
+  // Pale brass wash -- the "highlighter marker" tint behind emphasized
+  // grammar-rule text. Same family as brass, just light enough to sit
+  // behind a full sentence without fighting the body text.
+  brassTint: '#F3E3B8',
 
   // Text
   textPrimary: '#2B2118',

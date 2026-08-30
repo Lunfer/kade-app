@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { ScreenContainer } from '../components/ScreenContainer';
 import { GlossedSentence } from '../components/GlossedSentence';
+import { GrammarExplanationText } from '../components/GrammarExplanationText';
 import { colors, textStyles, spacing, radii } from '../theme';
 import { topicsRepo } from '../data/repositories/content';
 import { GrammarTopic } from '../data/types';
@@ -24,17 +25,11 @@ export function GrammarDetailScreen() {
     );
   }
 
-  const paragraphs = topic.explanation.split('\n\n');
-
   return (
     <ScreenContainer>
       <Text style={[textStyles.displayMedium, styles.title]}>{topic.title}</Text>
 
-      {paragraphs.map((p, i) => (
-        <Text key={i} style={[textStyles.body, styles.paragraph]}>
-          {p}
-        </Text>
-      ))}
+      <GrammarExplanationText text={topic.explanation} />
 
       <Text style={[textStyles.caption, styles.examplesLabel]}>EXAMPLES</Text>
       <View style={styles.examples}>
@@ -50,7 +45,6 @@ export function GrammarDetailScreen() {
 
 const styles = StyleSheet.create({
   title: { color: colors.brick, marginBottom: spacing.lg },
-  paragraph: { color: colors.textPrimary, marginBottom: spacing.md },
   examplesLabel: { color: colors.textFaded, marginTop: spacing.md, marginBottom: spacing.sm, letterSpacing: 0.5 },
   examples: { gap: spacing.sm },
   exampleRow: {

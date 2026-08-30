@@ -2,7 +2,7 @@ import React from 'react';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Text } from 'react-native';
+import { House, CaseLower, LoaderCircle, SquareText, Settings } from 'lucide-react-native';
 import { colors } from '../theme';
 import { HomeScreen } from '../screens/HomeScreen';
 import { GrammarListScreen } from '../screens/GrammarListScreen';
@@ -40,12 +40,12 @@ const navTheme = {
   },
 };
 
-const TAB_ICON: Record<string, string> = {
-  Home: '⌂', // house-ish glyph, kept as text so no icon font dependency
-  Grammar: '✍',
-  Progress: '↑',
-  Vocabulary: '⚪',
-  Settings: '⚙',
+const TAB_ICON: Record<string, typeof House> = {
+  Home: House,
+  Grammar: CaseLower,
+  Progress: LoaderCircle,
+  Vocabulary: SquareText,
+  Settings: Settings,
 };
 
 export function RootNavigator() {
@@ -57,7 +57,10 @@ export function RootNavigator() {
           tabBarActiveTintColor: colors.brick,
           tabBarInactiveTintColor: colors.textFaded,
           tabBarStyle: { backgroundColor: colors.surface, borderTopColor: colors.border },
-          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>{TAB_ICON[route.name]}</Text>,
+          tabBarIcon: ({ color, size }) => {
+            const Icon = TAB_ICON[route.name];
+            return <Icon color={color} size={size} />;
+          },
         })}
       >
         <Tab.Screen name="Home" component={HomeScreen} />
