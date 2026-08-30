@@ -1,12 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet, ActivityIndicator } from 'react-native';
-import { ScreenContainer } from '../components/ScreenContainer';
-import { GabledCard } from '../components/GabledCard';
-import { Button } from '../components/Button';
+import { Button } from './Button';
 import { colors, textStyles, spacing, radii } from '../theme';
 import { topicsRepo, drillsRepo, writingPromptsRepo } from '../data/repositories/content';
 import { progressRepo } from '../data/repositories/progress';
-import { DrillItem, GrammarTopic, WritingPrompt } from '../data/types';
+import { DrillItem, WritingPrompt } from '../data/types';
 import { buildPracticeQueue, gradeDrillAnswer, joinTokens, PracticeQueueItem } from '../engine/quizEngine';
 import { gradeSentence, GradeResponse } from '../api/gradingApi';
 
@@ -14,7 +12,9 @@ const QUEUE_LENGTH = 10;
 
 type Phase = 'loading' | 'answering' | 'checking' | 'feedback' | 'done' | 'empty';
 
-export function PracticeScreen() {
+// The live practice/drill session, embedded inline (e.g. inside the Home
+// screen's "Practice Today" card) rather than shown as its own screen.
+export function PracticeSession() {
   const [queue, setQueue] = useState<PracticeQueueItem[]>([]);
   const [index, setIndex] = useState(0);
   const [phase, setPhase] = useState<Phase>('loading');
@@ -91,30 +91,32 @@ export function PracticeScreen() {
 
   if (phase === 'loading') {
     return (
-      <ScreenContainer>
+      <View style={styles.centered}>
         <ActivityIndicator color={colors.brick} />
-      </ScreenContainer>
+      </View>
     );
   }
 
   if (phase === 'empty') {
     return (
-      <ScreenContainer>
-        <Text style={textStyles.heading}>Nothing to practice yet</Text>
-        <Text style={[textStyles.body, styles.mutedText]}>Content for your current level isn't loaded yet.</Text>
-      </ScreenContainer>
+      <View style={styles.centered}>
+        <Text style={[textStyles.subheading, styles.mutedText]}>Nothing to practice yet</Text>
+        <Text style={[textStyles.bodySmall, styles.mutedText, { marginTop: spacing.xs }]}>
+          Content for your current level isn't loaded yet.
+        </Text>
+      </View>
     );
   }
 
   if (phase === 'done') {
     return (
-      <ScreenContainer>
-        <GabledCard accentColor={colors.brass}>
-          <Text style={[textStyles.heading, { color: colors.textPrimary }]}>Session complete</Text>
-          <Text style={[textStyles.body, styles.mutedText]}>You practiced {queue.length} items. Nice work.</Text>
-        </GabledCard>
-        <Button title="Practice again" onPress={startSession} style={{ marginTop: spacing.lg }} />
-      </ScreenContainer>
+      <View>
+        <Text style={[textStyles.subheading, { color: colors.textPrimary }]}>Session complete</Text>
+        <Text style={[textStyles.bodySmall, styles.mutedText, { marginTop: spacing.xs }]}>
+          You practiced {queue.length} items. Nice work.
+        </Text>
+        <Button title="Practice again" onPress={startSession} style={{ marginTop: spacing.sm }} />
+      </View>
     );
   }
 
@@ -162,7 +164,7 @@ export function PracticeScreen() {
   };
 
   return (
-    <ScreenContainer>
+    <View>
       <Text style={[textStyles.caption, styles.progressLabel]}>
         {index + 1} / {queue.length} · {current.topic.title}
       </Text>
@@ -194,8 +196,8 @@ export function PracticeScreen() {
         />
       )}
 
-      {phase === 'feedback' && <Button title="Next" onPress={advance} style={{ marginTop: spacing.lg }} />}
-    </ScreenContainer>
+      {phase === 'feedback' && <Button title="Next" onPress={advance} style={{ marginTop: spacing.sm }} />}
+    </View>
   );
 }
 
@@ -217,7 +219,7 @@ function DrillCard(props: {
   const answered = phase === 'feedback';
 
   return (
-    <GabledCard accentColor={colors.teal}>
+    <View>
       <Text style={[textStyles.heading, styles.prompt]}>{drill.prompt}</Text>
 
       {drill.type === 'multiple-choice' && (
@@ -245,7 +247,7 @@ function DrillCard(props: {
             autoCapitalize="none"
             autoCorrect={false}
           />
-          {!answered && <Button title="Check" onPress={onSubmitText} style={{ marginTop: spacing.md }} />}
+          {!answered && <Button title="Check" onPress={onSubmitText} style={{ marginTop: spacing.sm }} />}
         </View>
       )}
 
@@ -286,7 +288,7 @@ function DrillCard(props: {
               title="Check"
               onPress={onSubmitTokens}
               disabled={tokenPool.length > 0}
-              style={{ marginTop: spacing.md }}
+              style={{ marginTop: spacing.sm }}
             />
           )}
         </View>
@@ -302,7 +304,7 @@ function DrillCard(props: {
           )}
         </View>
       )}
-    </GabledCard>
+    </View>
   );
 }
 
@@ -320,7 +322,7 @@ function WritingCard(props: {
   const checking = phase === 'checking';
 
   return (
-    <GabledCard accentColor={colors.brickDark}>
+    <View>
       <Text style={[textStyles.caption, styles.mutedText]}>WRITING PROMPT</Text>
       <Text style={[textStyles.heading, styles.prompt]}>{prompt.promptText}</Text>
       <Text style={[textStyles.bodySmall, styles.mutedText]}>{prompt.promptTextEn}</Text>
@@ -339,7 +341,7 @@ function WritingCard(props: {
       {error && <Text style={[textStyles.bodySmall, styles.errorText]}>{error}</Text>}
 
       {!answered && (
-        <Button title={checking ? 'Checking…' : 'Submit'} onPress={onSubmit} loading={checking} style={{ marginTop: spacing.md }} />
+        <Button title={checking ? 'Checking…' : 'Submit'} onPress={onSubmit} loading={checking} style={{ marginTop: spacing.sm }} />
       )}
 
       {answered && result && (
@@ -351,7 +353,7 @@ function WritingCard(props: {
           <Text style={[textStyles.bodySmall, styles.mutedText, { marginTop: spacing.xs }]}>{result.explanation}</Text>
         </View>
       )}
-    </GabledCard>
+    </View>
   );
 }
 
@@ -365,8 +367,9 @@ function shuffle<T>(arr: T[]): T[] {
 }
 
 const styles = StyleSheet.create({
-  progressLabel: { color: colors.textFaded, marginBottom: spacing.md, letterSpacing: 0.5 },
-  prompt: { color: colors.textPrimary, marginBottom: spacing.md },
+  centered: { alignItems: 'center', paddingVertical: spacing.lg },
+  progressLabel: { color: colors.textFaded, marginBottom: spacing.sm, letterSpacing: 0.5 },
+  prompt: { color: colors.textPrimary, marginBottom: spacing.sm },
   mutedText: { color: colors.textSecondary },
   errorText: { color: colors.error, marginTop: spacing.sm },
   optionsWrap: { gap: spacing.sm },
@@ -379,7 +382,7 @@ const styles = StyleSheet.create({
   },
   optionText: { color: colors.textPrimary },
   input: {
-    backgroundColor: colors.surfaceRaised,
+    backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: radii.md,
@@ -392,11 +395,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing.sm,
-    minHeight: 48,
+    minHeight: 40,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
     paddingBottom: spacing.sm,
-    marginBottom: spacing.md,
+    marginBottom: spacing.sm,
   },
   tokenPoolRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   tokenChip: {

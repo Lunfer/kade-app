@@ -5,7 +5,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Text } from 'react-native';
 import { colors } from '../theme';
 import { HomeScreen } from '../screens/HomeScreen';
-import { PracticeScreen } from '../screens/PracticeScreen';
 import { GrammarListScreen } from '../screens/GrammarListScreen';
 import { GrammarDetailScreen } from '../screens/GrammarDetailScreen';
 import { ProgressScreen } from '../screens/ProgressScreen';
@@ -43,7 +42,6 @@ const navTheme = {
 
 const TAB_ICON: Record<string, string> = {
   Home: '⌂', // house-ish glyph, kept as text so no icon font dependency
-  Practice: '✎',
   Grammar: '✍',
   Progress: '↑',
   Vocabulary: '⚪',
@@ -63,7 +61,6 @@ export function RootNavigator() {
         })}
       >
         <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Practice" component={PracticeScreen} />
         <Tab.Screen name="Grammar" component={GrammarStackNavigator} options={{ title: 'Grammar' }} />
         <Tab.Screen name="Progress" component={ProgressScreen} />
         <Tab.Screen name="Vocabulary" component={VocabularyScreen} />
