@@ -11,21 +11,24 @@ import { a0Drills } from './a0/drills';
 import { a2Topics } from './a2/topics';
 import { a2Drills } from './a2/drills';
 import { a2WritingPrompts } from './a2/writingPrompts';
+import { b1Topics } from './b1/topics';
+import { b1Drills } from './b1/drills';
+import { b1WritingPrompts } from './b1/writingPrompts';
 import { wordbankThemes } from './wordbank/themes';
 import { wordbankWords } from './wordbank/words';
 
 // Bump this whenever seed content changes shape or content. Content tables
 // get wiped and re-inserted on a version bump; attempts/progress are
 // untouched, since those are the user's actual data, not content.
-const CONTENT_VERSION = '2026-09-01.2';
+const CONTENT_VERSION = '2026-09-01.3';
 
 // A0 has no writing prompts (see docs/grammar-a0-curriculum-map.md -- free-form
 // writing needs a grammar system to write with, which A0 doesn't teach yet).
 export const allThemes = [...a0Themes, ...a1Themes, ...wordbankThemes];
 export const allWords: WordSeed[] = [...a0Words, ...a1Words, ...wordbankWords];
-export const allTopics = [...a0Topics, ...a1Topics, ...a2Topics];
-export const allDrills = [...a0Drills, ...a1Drills, ...a2Drills];
-export const allWritingPrompts = [...a1WritingPrompts, ...a2WritingPrompts];
+export const allTopics = [...a0Topics, ...a1Topics, ...a2Topics, ...b1Topics];
+export const allDrills = [...a0Drills, ...a1Drills, ...a2Drills, ...b1Drills];
+export const allWritingPrompts = [...a1WritingPrompts, ...a2WritingPrompts, ...b1WritingPrompts];
 
 export async function seedContentIfNeeded(): Promise<void> {
   const db = await getDb();
