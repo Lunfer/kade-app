@@ -17,14 +17,15 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.zoe.kadeapp",
+      "package": "com.lunfer.kadeapp",
       "ndkVersion": "30.0.14904198"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "./plugins/withNdkVersionFix.js"
+      "./plugins/withNdkVersionFix.js",
+      "./plugins/withReleaseSigning.js"
     ]
   }
 }
