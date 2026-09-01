@@ -53,3 +53,6 @@ PRIVATE_README.md
 # Claude architecture-notes cache (regenerate as needed, not for public repo)
 /frontend.md
 /backend.md
+
+# private dev/planning docs -- not for public repo
+docs/
