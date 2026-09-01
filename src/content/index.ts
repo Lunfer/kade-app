@@ -8,16 +8,18 @@ import { a0Themes } from './a0/themes';
 import { a0Words } from './a0/words';
 import { a0Topics } from './a0/topics';
 import { a0Drills } from './a0/drills';
+import { wordbankThemes } from './wordbank/themes';
+import { wordbankWords } from './wordbank/words';
 
 // Bump this whenever seed content changes shape or content. Content tables
 // get wiped and re-inserted on a version bump; attempts/progress are
 // untouched, since those are the user's actual data, not content.
-const CONTENT_VERSION = '2026-08-30.5';
+const CONTENT_VERSION = '2026-09-01.1';
 
 // A0 has no writing prompts (see docs/grammar-a0-curriculum-map.md -- free-form
 // writing needs a grammar system to write with, which A0 doesn't teach yet).
-export const allThemes = [...a0Themes, ...a1Themes];
-export const allWords: WordSeed[] = [...a0Words, ...a1Words];
+export const allThemes = [...a0Themes, ...a1Themes, ...wordbankThemes];
+export const allWords: WordSeed[] = [...a0Words, ...a1Words, ...wordbankWords];
 export const allTopics = [...a0Topics, ...a1Topics];
 export const allDrills = [...a0Drills, ...a1Drills];
 export const allWritingPrompts = [...a1WritingPrompts];
