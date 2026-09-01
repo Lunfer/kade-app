@@ -26,6 +26,9 @@ const CATEGORY_LABEL: Record<string, string> = {
   pronunciation: 'Pronunciation',
   phrases: 'Phrases',
   vocabulary: 'Vocabulary',
+  clause: 'Clause',
+  indefinite: 'Indefinite',
+  'pronominal-adverb': 'Pronominal adverb',
   other: 'Other',
 };
 

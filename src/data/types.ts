@@ -21,6 +21,9 @@ export type GrammarCategory =
   | 'pronunciation'
   | 'phrases'
   | 'vocabulary'
+  | 'clause'
+  | 'indefinite'
+  | 'pronominal-adverb'
   | 'other';
 
 export interface GrammarTopic {
