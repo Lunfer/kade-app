@@ -18,6 +18,7 @@
       },
       "predictiveBackGestureEnabled": false,
       "package": "com.lunfer.kadeapp",
+      "versionCode": 2,
       "ndkVersion": "30.0.14904198"
     },
     "web": {
